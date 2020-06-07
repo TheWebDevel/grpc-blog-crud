@@ -48,7 +48,7 @@ func main() {
 	collection = client.Database("mydb").Collection("blog")
 
 	// Start Service
-	fmt.Println("Blog service started...")
+	fmt.Println("Blog service started")
 	lis, err := net.Listen("tcp", "0.0.0.0:50051")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
