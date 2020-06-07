@@ -32,9 +32,9 @@ var collection *mongo.Collection
 func main() {
 	// If we get the crash code, we get the file name and line number
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
-	fmt.Println("Blog service started...")
 
 	// Connect with MongoDB
+	fmt.Println("Connecting to MongoDB...")
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://@localhost:27017"))
 	if err != nil {
 		log.Fatal(err)
@@ -47,6 +47,8 @@ func main() {
 	// Use the collection
 	collection = client.Database("mydb").Collection("blog")
 
+	// Start Service
+	fmt.Println("Blog service started...")
 	lis, err := net.Listen("tcp", "0.0.0.0:50051")
 	if err != nil {
 		log.Fatalf("Failed to listen: %v", err)
