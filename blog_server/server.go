@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -8,15 +9,43 @@ import (
 	"os/signal"
 
 	"github.com/thewebdevel/grpc-blog/blogpb"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc"
 )
 
 type server struct{}
 
+// Blog item structure
+// Use bson to map our struct elements with mongodb attributes
+type blogItem struct {
+	ID       primitive.ObjectID `bson:"_id,omitempty"`
+	AuthorID string             `bson:"author_id"`
+	Content  string             `bson:"content"`
+	Title    string             `bson:"title"`
+}
+
+// Make the MongoDB collection globally available
+var collection *mongo.Collection
+
 func main() {
 	// If we get the crash code, we get the file name and line number
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 	fmt.Println("Blog service started...")
+
+	// Connect with MongoDB
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://@localhost:27017"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = client.Connect(context.TODO())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Use the collection
+	collection = client.Database("mydb").Collection("blog")
 
 	lis, err := net.Listen("tcp", "0.0.0.0:50051")
 	if err != nil {
@@ -44,5 +73,7 @@ func main() {
 	s.Stop()
 	fmt.Println("Closing the listener...")
 	lis.Close()
+	fmt.Println("Closing MongoDB connection...")
+	client.Disconnect(context.TODO())
 	fmt.Println("End of Program")
 }
