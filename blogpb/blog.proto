@@ -25,6 +25,9 @@ message UpdateBlogResponse { Blog blog = 1; }
 message DeleteBlogRequest { string blog_id = 1; }
 message DeleteBlogResponse { string blog_id = 1; }
 
+message ListBlogRequest {}
+message ListBlogResponse { Blog blog = 1; }
+
 service BlogService {
   rpc CreateBlog(CreateBlogRequest) returns (CreateBlogResponse);
   rpc ReadBlog(ReadBlogRequest)
@@ -33,4 +36,5 @@ service BlogService {
       returns (UpdateBlogResponse); // Return NOT_FOUND if blog not found
   rpc DeleteBlog(DeleteBlogRequest)
       returns (DeleteBlogResponse); // Return NOT_FOUND if blog not found
+  rpc ListBlog(ListBlogRequest) returns (stream ListBlogResponse);
 }
