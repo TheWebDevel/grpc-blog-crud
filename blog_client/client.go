@@ -47,4 +47,18 @@ func main() {
 	}
 
 	fmt.Printf("Blog read: %v\n", readBlogRes)
+
+	// Update Blog
+	newBlog := &blogpb.Blog{
+		Id:       blogID,
+		AuthorId: "Swaathi",
+		Title:    "Erlang blog",
+		Content:  "Content of the Erlang blog",
+	}
+	updateBlogRes, err := c.UpdateBlog(context.Background(), &blogpb.UpdateBlogRequest{Blog: newBlog})
+	if err != nil {
+		fmt.Printf("Unable to update blog: %v\n", err)
+	}
+
+	fmt.Printf("Blog updated: %v\n", updateBlogRes)
 }
